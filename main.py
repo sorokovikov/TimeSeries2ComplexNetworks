@@ -6,6 +6,7 @@ import networkx as nx
 import numpy as np
 import os.path
 import pandas as pd
+import random
 
 
 interval_start: int = None
@@ -17,14 +18,13 @@ def show_main_menu():
     action = input_menu_action('\nВас приветствует программа конвертирования временных рядов в комплексные сети.\n'
                                'Выберите и введите номер действия:\n'
                                '1. Загрузить файл (формат .csv);\n'
-                               '2. Сгенерировать временной ряд;\n'
+                               '2. Сгенерировать случайный временной ряд;\n'
                                '3. Демонстрационный режим;\n'
                                '4. Выход.')
     if action == 1:
         load_csv_file()
     elif action == 2:
-        pass
-        # TODO Генерирование временного ряда
+        random_sample()
     elif action == 3:
         show_demo_menu()
     elif action == 4:
@@ -71,15 +71,15 @@ def get_investigated_data():
     columns = df.columns.values
     count = 1
     for column in columns:
-        print('{count}. {column};'.format(count=count, column=column))
+        if count < len(columns):
+            print(f'{count}. {column};')
+        else:
+            print(f'{count}. {column}.')
         count = count + 1
-    print('{count}. Вернуться к выбору действия над данными ->'.format(count=count))
     column_number = input_number() - 1
     if 0 <= column_number < len(columns):
         data = get_interval_menu()
         return data[:, column_number]
-    elif column_number == len(columns):
-        return show_data_menu()
     else:
         print('\nНеверный ввод. Введите номер столбца.')
         return get_investigated_data()
@@ -96,8 +96,7 @@ def get_interval_menu():
     action = input_menu_action('\nВыберите и введите объем данных:\n'
                                '1. Весь столбец;\n'
                                '2. Ввести интервал;\n'
-                               '3. Использовать ранее введенный интервал;\n'
-                               '4. Вернуться к выбору столбца ->')
+                               '3. Использовать ранее введенный интервал.')
     if action == 1:
         return df.to_numpy()
     elif action == 2:
@@ -109,8 +108,6 @@ def get_interval_menu():
         else:
             data = df.to_numpy()
             return data[interval_start:interval_stop]
-    elif action == 4:
-        return get_investigated_data()
     else:
         print('\nНеверный ввод. Введите номер выбранного объема данных.')
         return get_interval_menu()
@@ -148,17 +145,10 @@ def build_time_series(data):
 def build_complex_network(data):
     print('\nПостроение графика...')
     x = np.arange(len(data))
-    fig, ax = plt.subplots(1, 1)
+    fig, ax = plt.subplots()
     ax.bar(x, data, width=0.20, data=data)
     build_graph(x, data, ax)
     plt.show()
-
-
-def has_intersection(a, b, c):
-    result = b[1] + (a[1] - b[1]) * ((b[0] - c[0]) / (b[0] - a[0]))
-    if c[1] < result:
-        return False
-    return True
 
 
 def build_graph(x, y, ax):
@@ -171,6 +161,23 @@ def build_graph(x, y, ax):
                     break
             else:
                 ax.plot([x[i], x[j]], [y[i], y[j]])
+
+
+def has_intersection(a, b, c):
+    result = b[1] + (a[1] - b[1]) * ((b[0] - c[0]) / (b[0] - a[0]))
+    if c[1] < result:
+        return False
+    return True
+
+
+def random_sample():
+    size = 100
+    y = np.empty(size)
+    for i in range(size):
+        y[i] = random.random() * 100
+    build_time_series(y)
+    build_complex_network(y)
+    show_main_menu()
 
 
 def show_demo_menu():
@@ -189,8 +196,10 @@ def show_demo_menu():
                                '3. Вернуться в главное меню ->')
     if action == 1:
         build_time_series(y)
+        show_demo_menu()
     elif action == 2:
         build_complex_network(y)
+        show_demo_menu()
     elif action == 3:
         show_main_menu()
     else:
