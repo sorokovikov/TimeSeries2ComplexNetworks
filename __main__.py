@@ -24,6 +24,7 @@ def show_main_menu():
     if action == 1:
         load_csv_file()
     elif action == 2:
+        random_df()
         show_demo_menu()
     elif action == 3:
         print('\nВыход.')
@@ -90,31 +91,25 @@ def show_interval_menu():
 
 
 def show_demo_menu():
-    start = -5
-    stop = 5
-    size = 100
-    step = (stop - start) / size
-    x = np.arange(start, stop, step=step)
-    y = np.empty(size)
-    for i in range(size):
-        y[i] = 1 / math.sqrt(2 * math.pi) * math.exp(-0.5 * (x[i] ** 2))
-
     action = input_menu_action('\nВыберите и введите номер действия:\n'
-                               '1. Построить временной ряд (нормальное распределение);\n'
-                               '2. Построить комплексную сеть (нормальное распределение);\n'
-                               '3. Построить графики на основе случайно сгенерированной выборки;\n'
+                               '1. Построить график временного ряда;\n'
+                               '2. Построить гистограмму комплексной сети;\n'
+                               '3. Построить граф комплексной сети;\n'
                                '4. Вернуться в главное меню ->')
     if action == 1:
+        data = show_interval_menu()[:, 0]
         print('\nПостроение графика...')
-        build_time_series(y)
+        build_time_series(data)
         show_demo_menu()
     elif action == 2:
+        data = show_interval_menu()[:, 0]
         print('\nПостроение графика...')
-        build_complex_network_histogram(y)
+        build_complex_network_histogram(data)
         show_demo_menu()
     elif action == 3:
+        data = show_interval_menu()[:, 0]
         print('\nПостроение графика...')
-        random_sample()
+        build_complex_network_graph(data)
         show_demo_menu()
     elif action == 4:
         show_main_menu()
@@ -193,16 +188,18 @@ def build_complex_network_graph(data):
     plt.show()
 
 
+def random_df():
+    print('\nГенерируется случайная выборка (размерность 100)...')
+    global df
+    df = random_sample()
+
+
 def random_sample():
     size = 100
-    y = np.empty(size)
+    sample = pd.DataFrame(columns=['data'])
     for i in range(size):
-        y[i] = random.random() * 100
-
-    figure, axs = plt.subplots(2)
-    myplots.time_series(y, axs[0])
-    myplots.complex_network_histogram(y, axs[1])
-    plt.show()
+        sample = sample.append({'data': random.random() * 100}, ignore_index=True)
+    return sample
 
 
 if __name__ == '__main__':
