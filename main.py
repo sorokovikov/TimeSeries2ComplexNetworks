@@ -37,7 +37,8 @@ def show_data_menu():
     action = input_menu_action('\nВыберите и введите номер действия над данными:\n'
                                '1. Построить график временного ряда;\n'
                                '2. Построить график комплексной сети;\n'
-                               '3. Вернуться в главное меню ->')
+                               '3. Построить граф комплексной сети;\n'
+                               '4. Вернуться в главное меню ->')
     if action == 1:
         data = get_investigated_data()
         print('\nПостроение графика...')
@@ -49,6 +50,11 @@ def show_data_menu():
         build_complex_network(data)
         show_data_menu()
     elif action == 3:
+        data = get_investigated_data()
+        print('\nПостроение графика...')
+        build_complex_network_graph(data)
+        show_data_menu()
+    elif action == 4:
         show_main_menu()
     else:
         print('\nНеверный ввод. Введите номер действия.')
@@ -144,6 +150,12 @@ def build_time_series(data):
 def build_complex_network(data):
     figure, ax = plt.subplots()
     myplots.complex_network(data, ax)
+    plt.show()
+
+
+def build_complex_network_graph(data):
+    figure, ax = plt.subplots()
+    myplots.complex_network_graph(data, ax)
     plt.show()
 
 

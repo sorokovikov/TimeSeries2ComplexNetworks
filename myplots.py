@@ -16,6 +16,18 @@ def complex_network(data, ax: plt.axes):
     graph(x, data, ax)
 
 
+def complex_network_graph(data, ax: plt.axes):
+    x = np.arange(len(data))
+    nodes = get_graph_edges(x, data)
+    G = nx.from_pandas_edgelist(nodes, 'source', 'target', 'weight')
+    pos = nx.circular_layout(G)
+    node_labels = dict([(s, round(s, 3)) for s in G.nodes()])
+    edge_labels = dict([((s, t), w['weight']) for s, t, w in G.edges(data=True)])
+    nx.draw_networkx(G, pos=pos, ax=ax, with_labels=False, node_color='pink', edge_color='blue')
+    nx.draw_networkx_labels(G, pos=pos, ax=ax, labels=node_labels)
+    nx.draw_networkx_edge_labels(G, pos=pos, ax=ax, edge_labels=edge_labels, font_color='red')
+
+
 def graph(x, y, ax):
     ax.plot(x, y, color='green')
     stop = len(y)
@@ -28,7 +40,7 @@ def graph(x, y, ax):
                 ax.plot([x[i], x[j]], [y[i], y[j]])
 
 
-def get_graph_nodes(x, y):
+def get_graph_edges(x, y):
     edges = pd.DataFrame(columns=['source', 'target', 'weight'])
     for i in range(len(y) - 1):
         edges = edges.append({'source': y[i], 'target': y[i + 1], 'weight': 1}, ignore_index=True)
@@ -58,19 +70,14 @@ data = df.to_numpy()
 data = data[0:10, 3]
 x = np.arange(len(data))
 
-nodes = get_graph_nodes(x, data)
+nodes = get_graph_edges(x, data)
 print(nodes)
 
 G = nx.from_pandas_edgelist(nodes, 'source', 'target', 'weight')
 
 figure, axs = plt.subplots(2)
 
-pos = nx.circular_layout(G)
-node_labels = dict([(s, round(s, 3)) for s in G.nodes()])
-edge_labels = dict([((s, t), w['weight']) for s, t, w in G.edges(data=True)])
-nx.draw_networkx(G, pos=pos, ax=axs[0], with_labels=False)
-nx.draw_networkx_labels(G, pos=pos, ax=axs[0], labels=node_labels)
-nx.draw_networkx_edge_labels(G, pos=pos, ax=axs[0], edge_labels=edge_labels, font_color='red')
+complex_network_graph(data, axs[0])
 
 complex_network(data, axs[1])
 
