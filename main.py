@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 from input_output import *
 
 import math
+import myplots
 import networkx as nx
 import numpy as np
 import os.path
@@ -18,16 +19,13 @@ def show_main_menu():
     action = input_menu_action('\nВас приветствует программа конвертирования временных рядов в комплексные сети.\n'
                                'Выберите и введите номер действия:\n'
                                '1. Загрузить файл (формат .csv);\n'
-                               '2. Сгенерировать случайный временной ряд;\n'
-                               '3. Демонстрационный режим;\n'
-                               '4. Выход.')
+                               '2. Демонстрационный режим;\n'
+                               '3. Выход.')
     if action == 1:
         load_csv_file()
     elif action == 2:
-        random_sample()
-    elif action == 3:
         show_demo_menu()
-    elif action == 4:
+    elif action == 3:
         print('\nВыход.')
         exit(0)
     else:
@@ -42,10 +40,12 @@ def show_data_menu():
                                '3. Вернуться в главное меню ->')
     if action == 1:
         data = get_investigated_data()
+        print('\nПостроение графика...')
         build_time_series(data)
         show_data_menu()
     elif action == 2:
         data = get_investigated_data()
+        print('\nПостроение графика...')
         build_complex_network(data)
         show_data_menu()
     elif action == 3:
@@ -136,38 +136,15 @@ def get_data_interval(data):
 
 
 def build_time_series(data):
-    print('\nПостроение графика...')
-    x = np.arange(len(data))
-    plt.plot(x, data)
+    figure, ax = plt.subplots()
+    myplots.time_series(data, ax)
     plt.show()
 
 
 def build_complex_network(data):
-    print('\nПостроение графика...')
-    x = np.arange(len(data))
-    fig, ax = plt.subplots()
-    ax.bar(x, data, width=0.20, data=data)
-    build_graph(x, data, ax)
+    figure, ax = plt.subplots()
+    myplots.complex_network(data, ax)
     plt.show()
-
-
-def build_graph(x, y, ax):
-    ax.plot(x, y, color='green')
-    stop = len(y)
-    for i in range(0, stop - 2):
-        for j in range(i + 2, stop):
-            for k in range(i + 1, j):
-                if has_intersection([x[i], y[i]], [x[j], y[j]], [x[k], y[k]]):
-                    break
-            else:
-                ax.plot([x[i], x[j]], [y[i], y[j]])
-
-
-def has_intersection(a, b, c):
-    result = b[1] + (a[1] - b[1]) * ((b[0] - c[0]) / (b[0] - a[0]))
-    if c[1] < result:
-        return False
-    return True
 
 
 def random_sample():
@@ -175,9 +152,11 @@ def random_sample():
     y = np.empty(size)
     for i in range(size):
         y[i] = random.random() * 100
-    build_time_series(y)
-    build_complex_network(y)
-    show_main_menu()
+
+    figure, axs = plt.subplots(2)
+    myplots.time_series(y, axs[0])
+    myplots.complex_network(y, axs[1])
+    plt.show()
 
 
 def show_demo_menu():
@@ -191,16 +170,23 @@ def show_demo_menu():
         y[i] = 1 / math.sqrt(2 * math.pi) * math.exp(-0.5 * (x[i] ** 2))
 
     action = input_menu_action('\nВыберите и введите номер действия:\n'
-                               '1. Построить временной ряд;\n'
-                               '2. Построить комплексную сеть;\n'
-                               '3. Вернуться в главное меню ->')
+                               '1. Построить временной ряд (нормальное распределение);\n'
+                               '2. Построить комплексную сеть (нормальное распределение);\n'
+                               '3. Построить графики на основе случайно сгенерированной выборки;\n'
+                               '4. Вернуться в главное меню ->')
     if action == 1:
+        print('\nПостроение графика...')
         build_time_series(y)
         show_demo_menu()
     elif action == 2:
+        print('\nПостроение графика...')
         build_complex_network(y)
         show_demo_menu()
     elif action == 3:
+        print('\nПостроение графика...')
+        random_sample()
+        show_demo_menu()
+    elif action == 4:
         show_main_menu()
     else:
         print('\nНеверный ввод. Введите номер выбранного действия.')
