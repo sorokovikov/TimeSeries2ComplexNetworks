@@ -204,5 +204,5 @@ def show_demo_menu():
         print('\nНеверный ввод. Введите номер выбранного действия.')
         show_demo_menu()
 
-
-show_main_menu()
+if __name__ == '__main__':
+    show_main_menu()
