@@ -47,7 +47,7 @@ def show_data_menu():
     elif action == 2:
         data = get_investigated_data()
         print('\nПостроение графика...')
-        build_complex_network(data)
+        build_complex_network_histogram(data)
         show_data_menu()
     elif action == 3:
         data = get_investigated_data()
@@ -59,6 +59,68 @@ def show_data_menu():
     else:
         print('\nНеверный ввод. Введите номер действия.')
         show_data_menu()
+
+
+def show_interval_menu():
+    """
+    Позволяет выбрать интервал данных для построения: весь столбец или конкретный интервал.
+    Есть возможность вернуться в меню выбора столбца.
+    :return: Интервал данных
+    """
+    global interval_start
+    global interval_stop
+    action = input_menu_action('\nВыберите и введите объем данных:\n'
+                               '1. Весь столбец;\n'
+                               '2. Ввести интервал;\n'
+                               '3. Использовать ранее введенный интервал.')
+    if action == 1:
+        return df.to_numpy()
+    elif action == 2:
+        return get_data_interval(df.to_numpy())
+    elif action == 3:
+        if interval_stop is None:
+            print('\nВы еще не вводили интервал.')
+            return show_interval_menu()
+        else:
+            data = df.to_numpy()
+            return data[interval_start:interval_stop]
+    else:
+        print('\nНеверный ввод. Введите номер выбранного объема данных.')
+        return show_interval_menu()
+
+
+def show_demo_menu():
+    start = -5
+    stop = 5
+    size = 100
+    step = (stop - start) / size
+    x = np.arange(start, stop, step=step)
+    y = np.empty(size)
+    for i in range(size):
+        y[i] = 1 / math.sqrt(2 * math.pi) * math.exp(-0.5 * (x[i] ** 2))
+
+    action = input_menu_action('\nВыберите и введите номер действия:\n'
+                               '1. Построить временной ряд (нормальное распределение);\n'
+                               '2. Построить комплексную сеть (нормальное распределение);\n'
+                               '3. Построить графики на основе случайно сгенерированной выборки;\n'
+                               '4. Вернуться в главное меню ->')
+    if action == 1:
+        print('\nПостроение графика...')
+        build_time_series(y)
+        show_demo_menu()
+    elif action == 2:
+        print('\nПостроение графика...')
+        build_complex_network_histogram(y)
+        show_demo_menu()
+    elif action == 3:
+        print('\nПостроение графика...')
+        random_sample()
+        show_demo_menu()
+    elif action == 4:
+        show_main_menu()
+    else:
+        print('\nНеверный ввод. Введите номер выбранного действия.')
+        show_demo_menu()
 
 
 def load_csv_file():
@@ -84,39 +146,11 @@ def get_investigated_data():
         count = count + 1
     column_number = input_number() - 1
     if 0 <= column_number < len(columns):
-        data = get_interval_menu()
+        data = show_interval_menu()
         return data[:, column_number]
     else:
         print('\nНеверный ввод. Введите номер столбца.')
         return get_investigated_data()
-
-
-def get_interval_menu():
-    """
-    Позволяет выбрать интервал данных для построения: весь столбец или конкретный интервал.
-    Есть возможность вернуться в меню выбора столбца.
-    :return: Интервал данных
-    """
-    global interval_start
-    global interval_stop
-    action = input_menu_action('\nВыберите и введите объем данных:\n'
-                               '1. Весь столбец;\n'
-                               '2. Ввести интервал;\n'
-                               '3. Использовать ранее введенный интервал.')
-    if action == 1:
-        return df.to_numpy()
-    elif action == 2:
-        return get_data_interval(df.to_numpy())
-    elif action == 3:
-        if interval_stop is None:
-            print('\nВы еще не вводили интервал.')
-            return get_interval_menu()
-        else:
-            data = df.to_numpy()
-            return data[interval_start:interval_stop]
-    else:
-        print('\nНеверный ввод. Введите номер выбранного объема данных.')
-        return get_interval_menu()
 
 
 def get_data_interval(data):
@@ -147,9 +181,9 @@ def build_time_series(data):
     plt.show()
 
 
-def build_complex_network(data):
+def build_complex_network_histogram(data):
     figure, ax = plt.subplots()
-    myplots.complex_network(data, ax)
+    myplots.complex_network_histogram(data, ax)
     plt.show()
 
 
@@ -167,42 +201,9 @@ def random_sample():
 
     figure, axs = plt.subplots(2)
     myplots.time_series(y, axs[0])
-    myplots.complex_network(y, axs[1])
+    myplots.complex_network_histogram(y, axs[1])
     plt.show()
 
-
-def show_demo_menu():
-    start = -5
-    stop = 5
-    size = 100
-    step = (stop - start) / size
-    x = np.arange(start, stop, step=step)
-    y = np.empty(size)
-    for i in range(size):
-        y[i] = 1 / math.sqrt(2 * math.pi) * math.exp(-0.5 * (x[i] ** 2))
-
-    action = input_menu_action('\nВыберите и введите номер действия:\n'
-                               '1. Построить временной ряд (нормальное распределение);\n'
-                               '2. Построить комплексную сеть (нормальное распределение);\n'
-                               '3. Построить графики на основе случайно сгенерированной выборки;\n'
-                               '4. Вернуться в главное меню ->')
-    if action == 1:
-        print('\nПостроение графика...')
-        build_time_series(y)
-        show_demo_menu()
-    elif action == 2:
-        print('\nПостроение графика...')
-        build_complex_network(y)
-        show_demo_menu()
-    elif action == 3:
-        print('\nПостроение графика...')
-        random_sample()
-        show_demo_menu()
-    elif action == 4:
-        show_main_menu()
-    else:
-        print('\nНеверный ввод. Введите номер выбранного действия.')
-        show_demo_menu()
 
 if __name__ == '__main__':
     show_main_menu()
