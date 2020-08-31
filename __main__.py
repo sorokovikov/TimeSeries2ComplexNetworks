@@ -1,10 +1,7 @@
 from matplotlib import pyplot as plt
 from input_output import *
 
-import math
 import myplots
-import networkx as nx
-import numpy as np
 import os.path
 import pandas as pd
 import random
@@ -123,6 +120,7 @@ def load_csv_file():
     if os.path.isfile(file_path):
         global df
         df = pd.read_csv(file_path, header=0)
+        interval_reset()
         show_data_menu()
     else:
         print('\nФайл с таким именем не найден.')
@@ -149,8 +147,6 @@ def get_investigated_data():
 
 
 def get_data_interval(data):
-    global interval_start
-    global interval_stop
     data_length = len(data)
     start = input_number(text=f'\nВведите индекс для начала интервала (1-{data_length - 1}):') - 1
     if start < 0 or start >= data_length - 1:
@@ -165,8 +161,7 @@ def get_data_interval(data):
     if stop <= start + 1 or stop > data_length:
         print(f'Неверный ввод ("{stop}"). Конец интервала должен быть больше начала и меньше или равен длине столбца.')
         return get_data_interval(data)
-    interval_start = start
-    interval_stop = stop
+    interval_reset(start, stop)
     return data[start:stop]
 
 
@@ -192,6 +187,7 @@ def random_df():
     print('\nГенерируется случайная выборка (размерность 100)...')
     global df
     df = random_sample()
+    interval_reset()
 
 
 def random_sample():
@@ -200,6 +196,13 @@ def random_sample():
     for i in range(size):
         sample = sample.append({'data': random.random() * 100}, ignore_index=True)
     return sample
+
+
+def interval_reset(start=None, stop=None):
+    global interval_start
+    global interval_stop
+    interval_start = start
+    interval_stop = stop
 
 
 if __name__ == '__main__':
