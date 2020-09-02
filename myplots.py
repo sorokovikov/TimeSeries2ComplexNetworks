@@ -1,23 +1,22 @@
 from matplotlib import pyplot as plt
 
 import networkx as nx
-import numpy as np
 import pandas as pd
 
 
 def time_series(data, ax: plt.axes):
-    x = np.arange(len(data))
+    x = range(len(data))
     ax.plot(x, data)
 
 
 def complex_network_histogram(data, ax: plt.axes):
-    x = np.arange(len(data))
+    x = range(len(data))
     ax.bar(x, data, width=0.20, data=data)
     graph(x, data, ax)
 
 
 def complex_network_graph(data, ax: plt.axes):
-    x = np.arange(len(data))
+    x = range(len(data))
     edges = get_graph_edges(x, data)
     G = nx.from_pandas_edgelist(edges, 'source', 'target', 'weight')
     pos = nx.circular_layout(G)
@@ -68,4 +67,4 @@ file_path = 'DailyDelhiClimateTest.csv'
 df = pd.read_csv(file_path, header=0)
 data = df.to_numpy()
 data = data[0:10, 3]
-x = np.arange(len(data))
+x = range(len(data))
