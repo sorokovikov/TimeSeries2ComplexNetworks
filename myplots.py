@@ -1,25 +1,24 @@
 from matplotlib import pyplot as plt
 
 import networkx as nx
-import numpy as np
 import pandas as pd
 
 
 def time_series(data, ax: plt.axes):
-    x = np.arange(len(data))
+    x = range(len(data))
     ax.plot(x, data)
 
 
-def complex_network(data, ax: plt.axes):
-    x = np.arange(len(data))
+def complex_network_histogram(data, ax: plt.axes):
+    x = range(len(data))
     ax.bar(x, data, width=0.20, data=data)
     graph(x, data, ax)
 
 
 def complex_network_graph(data, ax: plt.axes):
-    x = np.arange(len(data))
-    nodes = get_graph_edges(x, data)
-    G = nx.from_pandas_edgelist(nodes, 'source', 'target', 'weight')
+    x = range(len(data))
+    edges = get_graph_edges(x, data)
+    G = nx.from_pandas_edgelist(edges, 'source', 'target', 'weight')
     pos = nx.circular_layout(G)
     node_labels = dict([(s, round(s, 3)) for s in G.nodes()])
     edge_labels = dict([((s, t), w['weight']) for s, t, w in G.edges(data=True)])
@@ -28,7 +27,7 @@ def complex_network_graph(data, ax: plt.axes):
     nx.draw_networkx_edge_labels(G, pos=pos, ax=ax, edge_labels=edge_labels, font_color='red')
 
 
-def graph(x, y, ax):
+def graph(x, y, ax: plt.axes):
     ax.plot(x, y, color='green')
     stop = len(y)
     for i in range(0, stop - 2):
@@ -68,17 +67,4 @@ file_path = 'DailyDelhiClimateTest.csv'
 df = pd.read_csv(file_path, header=0)
 data = df.to_numpy()
 data = data[0:10, 3]
-x = np.arange(len(data))
-
-nodes = get_graph_edges(x, data)
-print(nodes)
-
-G = nx.from_pandas_edgelist(nodes, 'source', 'target', 'weight')
-
-figure, axs = plt.subplots(2)
-
-complex_network_graph(data, axs[0])
-
-complex_network(data, axs[1])
-
-plt.show()
+x = range(len(data))
