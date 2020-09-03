@@ -61,10 +61,3 @@ def has_intersection(a, b, c):
     if c[1] < result:
         return False
     return True
-
-
-file_path = 'DailyDelhiClimateTest.csv'
-df = pd.read_csv(file_path, header=0)
-data = df.to_numpy()
-data = data[0:10, 3]
-x = range(len(data))
