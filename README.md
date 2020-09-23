@@ -16,8 +16,8 @@ TimeSeries2ComplexNetworks - это программа, предназначен
     скопируйте адрес репозитория и выполните в командной строке команду 
     'git clone https://github.com/sorokovikov/TimeSeries2ComplexNetworks.git'.
     
-    ![Кнопка скачивание архива и адрес ссылки репозитория]
-    (https://github-images.s3.amazonaws.com/enterprise/2.13/assets/images/help/repository/https-url-clone.png)
+![Кнопка скачивание архива и адрес ссылки репозитория]
+(https://github-images.s3.amazonaws.com/enterprise/2.13/assets/images/help/repository/https-url-clone.png)
     
 2. Перейдите в каталог программы.
 3. В командной строке выполните команду 'python setup.py install'.
